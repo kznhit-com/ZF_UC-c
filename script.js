@@ -1,74 +1,63 @@
-/* =========================
-   تنقل بين الصفحات
-========================= */
-function goTo(page){
-    window.location.href = page;
+/* تنقل */
+function goTo(p){location.href=p}
+
+/* دارك مود */
+(function(){
+    if(localStorage.getItem("dark")==="on")
+        document.body.classList.add("dark");
+})();
+
+function toggleDark(){
+    document.body.classList.toggle("dark");
+    localStorage.setItem("dark",
+        document.body.classList.contains("dark")?"on":"off"
+    );
 }
 
-/* =========================
-   رسالة وسط الشاشة (3 ثواني)
-========================= */
-function showCenterMessage(text){
-    let box = document.getElementById("centerMessage");
-    if(!box){
-        box = document.createElement("div");
-        box.id = "centerMessage";
-        document.body.appendChild(box);
-    }
-
-    box.innerText = text;
-    box.style.display = "flex";
-    box.classList.add("show");
-
-    setTimeout(()=>{
-        box.classList.remove("show");
-        setTimeout(()=>box.style.display="none",300);
-    },3000);
+/* منيو */
+function toggleMenu(){
+    const m=document.getElementById("menu");
+    m.style.display=m.style.display==="block"?"none":"block";
 }
 
-/* =========================
-   حفظ الدرجات
-========================= */
-function saveScore(data){
-    let scores = JSON.parse(localStorage.getItem("scores") || "[]");
+/* تحميل الدرجات */
+function loadScores(){
+    lastScore.innerText = localStorage.getItem("lastScore")||"-";
+    tries.innerText = localStorage.getItem("tries")||0;
+    mathScore.innerText = localStorage.getItem("mathScore")||"-";
+    logicScore.innerText = localStorage.getItem("logicScore")||"-";
+    memoryScore.innerText = localStorage.getItem("memoryScore")||"-";
+}
+loadScores();
 
-    // احذف نتيجة قديمة لنفس اللعبة
-    scores = scores.filter(s => s.game !== data.game);
-
-    scores.push({
-        game: data.game,
-        score: data.score,
-        text: data.text,
-        time: new Date().toLocaleString()
-    });
-
-    localStorage.setItem("scores", JSON.stringify(scores));
+/* حفظ نتيجة (تستعمل داخل الألعاب) */
+function saveScore(game,score,text){
+    localStorage.setItem(game+"Score",score);
+    localStorage.setItem("lastScore",text);
+    localStorage.setItem("tries",(+(localStorage.getItem("tries")||0))+1);
 }
 
-/* =========================
-   جلب الدرجات
-========================= */
-function getScores(){
-    return JSON.parse(localStorage.getItem("scores") || "[]");
+/* تصفير */
+function resetAll(){
+    localStorage.clear();
+    location.reload();
 }
 
-/* =========================
-   تصفير الدرجات
-========================= */
-function resetScores(){
-    if(confirm("متأكد تبغى تصفّر كل الدرجات؟")){
-        localStorage.removeItem("scores");
-        location.reload();
-    }
+/* رسالة وسط الشاشة */
+function showCenterMessage(t){
+    const d=document.createElement("div");
+    d.innerText=t;
+    d.style.cssText=`
+        position:fixed;
+        top:50%;left:50%;
+        transform:translate(-50%,-50%);
+        background:#000c;
+        color:#fff;
+        padding:25px 35px;
+        border-radius:18px;
+        font-size:24px;
+        z-index:9999;
+    `;
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),3000);
 }
-
-/* =========================
-   تجهيز الرسالة بالتحميل
-========================= */
-document.addEventListener("DOMContentLoaded",()=>{
-    if(!document.getElementById("centerMessage")){
-        const msg = document.createElement("div");
-        msg.id = "centerMessage";
-        document.body.appendChild(msg);
-    }
-});
