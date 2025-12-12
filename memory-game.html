@@ -3,110 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <title>لعبة الذاكرة</title>
+
 <style>
 body{
     font-family:Arial;
-    text-align:center;
     background:#f0f0f0;
     margin:0;
-    padding:20px
+    padding-top:20px;
+    text-align:center;
 }
-button{
-    padding:10px 18px;
-    font-size:16px;
-    cursor:pointer;
-    margin:5px
-}
-#gameBoard{
-    margin-top:20px;
-    display:grid;
-    gap:10px;
-    justify-content:center
-}
-.card{
-    width:80px;
-    height:80px;
-    background:#4CAF50;
-    color:white;
-    font-size:24px;
-    line-height:80px;
-    cursor:pointer;
-    user-select:none
-}
-.hidden{
-    background:#ccc;
-    color:#ccc
-}
-#timer{
-    font-size:20px;
-    margin-top:10px
-}
-#message{
-    font-size:24px;
-    margin-top:20px
-}
+
 .back{
+    margin:10px;
+    padding:8px 16px;
     background:#333;
     color:#fff;
     border:none;
-    border-radius:8px
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#difficulty{
+    margin:20px;
+}
+
+button{
+    padding:10px 16px;
+    font-size:16px;
+    cursor:pointer;
+    border-radius:10px;
+    border:none;
+    margin:5px;
+}
+
+#timer{
+    font-size:20px;
+    margin:15px;
+}
+
+#board{
+    display:grid;
+    gap:10px;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.card{
+    width:80px;
+    height:80px;
+    background:#84a98c;
+    color:white;
+    font-size:26px;
+    line-height:80px;
+    cursor:pointer;
+    user-select:none;
+}
+
+.hidden{
+    background:#ccc;
+    color:#ccc;
+}
+
+#actions{
+    margin:20px;
+    display:none;
 }
 </style>
 </head>
+
 <body>
 
-<button class="back" onclick="window.location.href='index.html'">⬅️ رجوع</button>
+<button class="back" onclick="goTo('index.html')">⬅️ رجوع</button>
 
 <h2>اختر المستوى</h2>
-<div id="difficultyChoice">
-    <button onclick="setDifficulty('easy')">سهل</button>
-    <button onclick="setDifficulty('hard')">صعب</button>
+<div id="difficulty">
+    <button onclick="setLevel('easy')">سهل</button>
+    <button onclick="setLevel('hard')">صعب</button>
 </div>
 
-<button id="startBtn" onclick="startGame()" style="display:none">ابدأ</button>
-
 <div id="timer"></div>
-<div id="gameBoard"></div>
-<div id="message"></div>
+<div id="board"></div>
+
+<div id="actions">
+    <button onclick="location.reload()">🔄 إعادة اللعب</button>
+</div>
+
+<script src="script.js"></script>
 
 <script>
-let difficulty="";
+let level="";
 let cards=[];
 let first=null, second=null, lock=false;
 let matches=0, totalPairs=0;
-let startTime, timerInterval;
+let startTime, timerInt;
 
-function setDifficulty(level){
-    difficulty=level;
-    const count = level==="easy"?16:30;
+function setLevel(l){
+    level=l;
+    const count = l==="easy"?16:30;
     totalPairs = count/2;
     cards = shuffle([...Array(totalPairs).keys()].map(i=>i+1).flatMap(n=>[n,n]));
-    document.getElementById("difficultyChoice").style.display="none";
-    document.getElementById("startBtn").style.display="inline-block";
+    difficulty.style.display="none";
+    startGame();
 }
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 
 function startGame(){
-    startBtn.style.display="none";
-    gameBoard.innerHTML="";
     matches=0;
     first=second=null;
     lock=false;
+    board.innerHTML="";
 
-    const cols = difficulty==="easy"?4:6;
-    gameBoard.style.gridTemplateColumns=`repeat(${cols},80px)`;
+    const cols = level==="easy"?4:6;
+    board.style.gridTemplateColumns=`repeat(${cols},80px)`;
 
     cards.forEach(n=>{
         const c=document.createElement("div");
         c.className="card hidden";
         c.dataset.num=n;
         c.onclick=()=>flip(c);
-        gameBoard.appendChild(c);
+        board.appendChild(c);
     });
 
     startTime=Date.now();
-    timerInterval=setInterval(updateTimer,1000);
+    timerInt=setInterval(updateTimer,1000);
 }
 
 function updateTimer(){
@@ -140,28 +160,25 @@ function checkMatch(){
 }
 
 function endGame(){
-    clearInterval(timerInterval);
+    clearInterval(timerInt);
     const time=Math.floor((Date.now()-startTime)/1000);
 
     let msg="";
     if(time<=40) msg="حيّ عينك 🔥";
-    else if(time<=60) msg="طوّلت شوي 😅";
+    else if(time<=60) msg="مااااش 😅";
     else msg="طوّلت يا أخي جانا النوم 😴";
 
-    message.innerText=msg+" — وقتك: "+time+" ثانية";
+    showCenterMessage(msg);
 
-    /* 💾 localStorage */
-    localStorage.setItem("lastScore", time);
+    saveScore({
+        game:"memory",
+        score:time,
+        text:"🃏 ذاكرة: "+time+" ثانية"
+    });
 
-    let best = localStorage.getItem("bestMemory");
-    if(!best || time < best) localStorage.setItem("bestMemory", time);
-
-    localStorage.setItem("memoryScore", time);
-    localStorage.setItem("tries", Number(localStorage.getItem("tries")||0)+1);
-
-    let history = JSON.parse(localStorage.getItem("history")||"[]");
-    history.push("🃏 ذاكرة: "+time+" ثانية");
-    localStorage.setItem("history", JSON.stringify(history));
+    setTimeout(()=>{
+        actions.style.display="block";
+    },3000);
 }
 </script>
 
