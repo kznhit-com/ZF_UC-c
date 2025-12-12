@@ -4,19 +4,43 @@
 <meta charset="UTF-8">
 <title>لعبة المعلومات</title>
 <style>
-body{font-family:Arial;text-align:center;background:#f0f0f0;margin:0;padding-top:40px}
+body{
+    font-family:Arial;
+    text-align:center;
+    background:#f0f0f0;
+    margin:0;
+    padding-top:30px
+}
 .question{font-size:22px;margin-bottom:20px}
-.option{display:block;margin:8px auto;padding:10px 20px;font-size:18px;cursor:pointer;width:300px}
+.option{
+    display:block;
+    margin:8px auto;
+    padding:10px 20px;
+    font-size:18px;
+    cursor:pointer;
+    width:300px
+}
 .correct{background:#b6f2b6}
 .incorrect{background:#f2b6b6}
 #message{font-size:24px;margin:20px}
+.back{
+    margin-bottom:15px;
+    cursor:pointer;
+    background:#333;
+    color:#fff;
+    border:none;
+    padding:8px 16px;
+    border-radius:8px
+}
 </style>
 </head>
 <body>
 
+<button class="back" onclick="window.location.href='index.html'">⬅️ رجوع</button>
+
 <div id="game">
-<div class="question" id="question"></div>
-<div id="options"></div>
+    <div class="question" id="question"></div>
+    <div id="options"></div>
 </div>
 
 <div id="message"></div>
@@ -63,49 +87,60 @@ const allQuestions = [
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 
-let questions=shuffle([...allQuestions]).slice(0,10);
-let index=0,score=0,answers=[];
+let questions = shuffle([...allQuestions]).slice(0,10);
+let index=0, score=0, answers=[];
 
 function show(){
-const q=questions[index];
-document.getElementById("question").innerText=q.q;
-const opts=shuffle([...q.c]);
-const box=document.getElementById("options");
-box.innerHTML="";
-opts.forEach(o=>{
-const b=document.createElement("button");
-b.className="option";
-b.innerText=o;
-b.onclick=()=>check(o);
-box.appendChild(b);
-});
+    const q = questions[index];
+    question.innerText = q.q;
+    const opts = shuffle([...q.c]);
+    options.innerHTML="";
+    opts.forEach(o=>{
+        const b=document.createElement("button");
+        b.className="option";
+        b.innerText=o;
+        b.onclick=()=>check(o);
+        options.appendChild(b);
+    });
 }
 
 function check(sel){
-answers.push({sel,correct:questions[index].a});
-if(sel===questions[index].a)score++;
-index++;
-if(index<questions.length)setTimeout(show,300);
-else end();
+    answers.push({sel,correct:questions[index].a});
+    if(sel===questions[index].a) score++;
+    index++;
+    index<questions.length ? setTimeout(show,300) : end();
 }
 
 function end(){
-document.getElementById("game").style.display="none";
-let msg="";
-if(score>=7)msg="حيّ عينك كفو كفو";
-else if(score>=4)msg="مااااااااش!";
-else msg="لا أحد يشوفك بس";
-const m=document.getElementById("message");
-m.innerText=msg;
-setTimeout(()=>{
-m.innerHTML="<h3>إجاباتك:</h3>";
-answers.forEach(a=>{
-const d=document.createElement("div");
-d.innerText=a.sel;
-d.className=a.sel===a.correct?"correct":"incorrect";
-m.appendChild(d);
-});
-},3000);
+    game.style.display="none";
+
+    let msg = score>=7 ? "حيّ عينك كفو كفو"
+            : score>=4 ? "مااااااااش!"
+            : "لا أحد يشوفك بس";
+    message.innerText = msg;
+
+    /* 💾 localStorage */
+    localStorage.setItem("lastScore", score);
+
+    let best = localStorage.getItem("bestScore");
+    if(!best || score>best) localStorage.setItem("bestScore", score);
+
+    localStorage.setItem("logicScore", score);
+    localStorage.setItem("tries", Number(localStorage.getItem("tries")||0)+1);
+
+    let history = JSON.parse(localStorage.getItem("history")||"[]");
+    history.push("🧠 معلومات: "+score+"/10");
+    localStorage.setItem("history", JSON.stringify(history));
+
+    setTimeout(()=>{
+        message.innerHTML="<h3>إجاباتك:</h3>";
+        answers.forEach(a=>{
+            const d=document.createElement("div");
+            d.innerText=a.sel;
+            d.className=a.sel===a.correct?"correct":"incorrect";
+            message.appendChild(d);
+        });
+    },3000);
 }
 
 show();
