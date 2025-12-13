@@ -94,12 +94,7 @@ function end(){
 
     const msg = score>=7?"حيّ عينك كفو كفو":score>=4?"مااااش":"لا أحد يشوفك بس";
     showCenterMessage(msg + "\nدرجتك: " + score + " / 10");
-
-    saveScore({
-        game:"logic",
-        score:score,
-        text:"🧠 معلومات: "+score+"/10"
-    });
+saveScore("logic", score, "🧠 معلومات: " + score + "/10");
 
     setTimeout(()=>{
         message.innerHTML="<h3>تفصيل الإجابات:</h3>";
