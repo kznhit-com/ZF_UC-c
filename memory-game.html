@@ -1,139 +1,183 @@
-/* ===== أدوات عامة ===== */
-function shuffle(arr){
-    return arr.sort(()=>Math.random()-0.5);
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>لعبة الذاكرة</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:linear-gradient(135deg,#264653,#2a9d8f);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
 }
 
-function goTo(page){
-    window.location.href = page;
+.game-container{
+    position:relative;
+    width:90%;
+    max-width:520px;
+    background:rgba(0,0,0,.45);
+    padding:30px;
+    border-radius:22px;
+    text-align:center;
 }
 
-/* ===== رسالة بالنص ===== */
-function showCenterMessage(text){
-    const overlay = document.createElement("div");
-    overlay.className = "center";
-    overlay.innerHTML = `<div>${text}</div>`;
-    document.body.appendChild(overlay);
-    setTimeout(()=>overlay.remove(),3000);
+.back{
+    position:absolute;
+    top:15px;
+    left:15px;
+    border:none;
+    border-radius:12px;
+    padding:8px 14px;
+    cursor:pointer;
 }
 
-/* ===== حفظ الدرجات ===== */
-function saveScore(data){
-    localStorage.setItem("lastScore", data.text);
+h2{margin-bottom:10px}
 
-    let tries = Number(localStorage.getItem("tries") || 0) + 1;
-    localStorage.setItem("tries", tries);
-
-    if(data.game === "math"){
-        localStorage.setItem("mathScore", data.score+"/10");
-    }
-    if(data.game === "logic"){
-        localStorage.setItem("logicScore", data.score+"/10");
-    }
-    if(data.game === "memory"){
-        localStorage.setItem("memoryScore", data.score+" ث");
-    }
-
-    let best = Number(localStorage.getItem("bestScore") || 0);
-    if(data.score > best){
-        localStorage.setItem("bestScore", data.score);
-    }
+#timer{
+    font-size:20px;
+    margin-bottom:15px;
 }
 
-/* ===== دارك / فاتح ===== */
-function toggleDark(){
-    document.body.classList.toggle("light");
-    localStorage.setItem(
-        "theme",
-        document.body.classList.contains("light") ? "light" : "dark"
-    );
+.board{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    justify-items:center;
 }
 
-if(localStorage.getItem("theme")==="light"){
-    document.body.classList.add("light");
+.card{
+    width:80px;
+    height:80px;
+    border-radius:14px;
+    background:#84a98c;
+    color:#fff;
+    font-size:26px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    user-select:none;
 }
 
-/* ===== لعبة الأسئلة (رياضيات / معلومات / الرابعة) ===== */
-let timer;
-let timePerQuestion = 5;
-
-function startQuiz(allQuestions, gameName){
-    let questions = shuffle([...allQuestions]).slice(0,10);
-    let index=0, score=0, results=[];
-
-    const qBox = document.querySelector(".question");
-    const ansBox = document.querySelector(".answers");
-
-    function next(){
-        if(index >= questions.length){
-            end();
-            return;
-        }
-
-        let q = questions[index];
-        qBox.innerText = q.q;
-        ansBox.innerHTML = "";
-
-        shuffle([...q.c]).forEach(opt=>{
-            let b = document.createElement("button");
-            b.innerText = opt;
-            b.onclick = ()=>answer(opt);
-            ansBox.appendChild(b);
-        });
-
-        timer = setTimeout(()=>{
-            results.push({
-                q:q.q,
-                sel:"—",
-                cor:q.a
-            });
-            index++;
-            next();
-        }, timePerQuestion*1000);
-    }
-
-    function answer(sel){
-        clearTimeout(timer);
-        let q = questions[index];
-        if(sel===q.a) score++;
-        results.push({q:q.q, sel:sel, cor:q.a});
-        index++;
-        next();
-    }
-
-    function end(){
-        let msg =
-            score>=7 ? "حي عينك كفو كفو!" :
-            score>=4 ? "مااااش!" :
-            "لا حد يشوف درجتك بس";
-
-        showCenterMessage(msg);
-
-        saveScore({
-            game:gameName,
-            score:score,
-            text:score+"/10"
-        });
-
-        setTimeout(()=>{
-            document.querySelector(".game-container").innerHTML = `
-            <h2>نتيجتك: ${score}/10</h2>
-            <div class="results">
-            ${results.map(r=>`
-                <div class="result">
-                <b>${r.q}</b><br>
-                <span class="${r.sel===r.cor?'correct':'incorrect'}">
-                اختيارك: ${r.sel}
-                </span><br>
-                <span class="correct">الصحيح: ${r.cor}</span>
-                </div>
-            `).join("")}
-            </div>
-            <div class="actions">
-                <button onclick="location.reload()">🔄 إعادة اللعب</button>
-            </div>
-            `;
-        },3000);
-    }
-
-    next();
+.hidden{
+    background:#ccc;
+    color:#ccc;
 }
+
+.center{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:100;
+}
+.center div{
+    background:#fff;
+    color:#000;
+    padding:30px;
+    border-radius:20px;
+    font-size:24px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+    <button class="back" onclick="location.href='index.html'">⬅️</button>
+    <h2>🃏 لعبة الذاكرة</h2>
+    <div id="timer">⏱️ 0 ثانية</div>
+    <div class="board" id="board"></div>
+</div>
+
+<script>
+function shuffle(a){return a.sort(()=>Math.random()-0.5)}
+
+const board = document.getElementById("board");
+const timerBox = document.getElementById("timer");
+
+let cards=[];
+let first=null, second=null, lock=false;
+let matches=0;
+let startTime, timer;
+
+function start(){
+    const nums=[1,2,3,4,5,6,7,8];
+    cards = shuffle([...nums,...nums]);
+    board.innerHTML="";
+    matches=0;
+    first=second=null;
+    lock=false;
+
+    cards.forEach(n=>{
+        const c=document.createElement("div");
+        c.className="card hidden";
+        c.dataset.val=n;
+        c.onclick=()=>flip(c);
+        board.appendChild(c);
+    });
+
+    startTime=Date.now();
+    timer=setInterval(updateTime,1000);
+}
+
+function updateTime(){
+    const t=Math.floor((Date.now()-startTime)/1000);
+    timerBox.innerText="⏱️ "+t+" ثانية";
+}
+
+function flip(card){
+    if(lock || !card.classList.contains("hidden")) return;
+    card.classList.remove("hidden");
+    card.innerText=card.dataset.val;
+
+    if(!first){ first=card; return; }
+    second=card;
+    lock=true;
+    setTimeout(check,600);
+}
+
+function check(){
+    if(first.dataset.val===second.dataset.val){
+        matches++;
+        if(matches===8) endGame();
+    }else{
+        first.classList.add("hidden");
+        second.classList.add("hidden");
+        first.innerText=second.innerText="";
+    }
+    first=second=null;
+    lock=false;
+}
+
+function endGame(){
+    clearInterval(timer);
+    const time=Math.floor((Date.now()-startTime)/1000);
+
+    let msg =
+        time<=40 ? "حي عينك 🔥" :
+        time<=60 ? "مااااش 😅" :
+        "طولت يا أخي جانا النوم 😴";
+
+    const c=document.createElement("div");
+    c.className="center";
+    c.innerHTML=`<div>${msg}<br>وقتك: ${time} ثانية</div>`;
+    document.body.appendChild(c);
+
+    setTimeout(()=>c.remove(),3000);
+}
+
+start();
+</script>
+
+</body>
+</html>
