@@ -1,122 +1,131 @@
-const allQuestions = [
-{q:"أيهما أثقل؟",c:["كيلو حديد","كيلو قطن","نفس الوزن","ولا واحد"],a:"نفس الوزن"},
-{q:"شي يمشي بلا قدمين؟",c:["المطر","الظل","الوقت","الهواء"],a:"الوقت"},
-{q:"كم شهر فيه 28 يوم؟",c:["1","12","6","0"],a:"12"},
-{q:"شي يكبر كل ما أخذت منه؟",c:["العمر","الحفرة","الظل","الديون"],a:"الحفرة"},
-{q:"ما الذي إذا ذكرته كسرته؟",c:["الصمت","الوعد","الزجاج","القلب"],a:"الصمت"},
-{q:"أيهما يسبق؟",c:["الفجر","الظهر","العصر","المغرب"],a:"الفجر"},
-{q:"ما لا يُبلل إذا دخل الماء؟",c:["الظل","الهواء","النار","الضوء"],a:"الظل"},
-{q:"شي يطير بلا جناح؟",c:["الوقت","الصوت","الدخان","الخيال"],a:"الوقت"},
-{q:"أيهما لا يُكسر؟",c:["الزجاج","الوعد","الحجر","الخشب"],a:"الوعد"},
-{q:"ما الذي يكتب ولا يقرأ؟",c:["القلم","الكتاب","الكمبيوتر","اللوح"],a:"القلم"},
+/* ===== أدوات ===== */
+function shuffle(a){
+    return a.sort(()=>Math.random()-0.5);
+}
 
-{q:"ما الذي يسمع بلا أذن؟",c:["القلب","الصدى","العين","الريح"],a:"الصدى"},
-{q:"شي يولد كبير ويموت صغير؟",c:["الشمعة","العمر","الظل","النار"],a:"الشمعة"},
-{q:"ما الذي لا يعود إذا خرج؟",c:["الصوت","الوقت","الهواء","الضوء"],a:"الوقت"},
-{q:"أيهما أسرع؟",c:["الصوت","الضوء","الريح","الفكر"],a:"الضوء"},
-{q:"شي لا يمشي إلا بالضرب؟",c:["المسمار","الكرة","الطبل","الباب"],a:"المسمار"},
-{q:"ما الذي يسبقك دائمًا؟",c:["ظلك","اسمك","ماضيك","مستقبلك"],a:"ظلك"},
-{q:"شي إذا أخذت منه كبر؟",c:["العمر","الحفرة","الظل","الوقت"],a:"الحفرة"},
-{q:"ما الذي يُرى ولا يُمس؟",c:["الضوء","الماء","التراب","الحديد"],a:"الضوء"},
-{q:"ما الذي يمتلئ بلا فراغ؟",c:["العقل","البحر","الهواء","الكوب"],a:"العقل"},
-{q:"ما الذي يسير بلا قدمين ويبكي بلا عين؟",c:["السحاب","الريح","المطر","الظل"],a:"السحاب"},
-
-{q:"ما الذي إذا كبر صغر؟",c:["العمر","الثقب","الظل","الوقت"],a:"الثقب"},
-{q:"ما الذي لا يُرى إلا إذا كبر؟",c:["الغبار","الظل","النور","الماء"],a:"الغبار"},
-{q:"ما الذي يتكلم بلا لسان؟",c:["الكتاب","القلم","الصورة","الرسالة"],a:"الكتاب"},
-{q:"أيهما أكبر؟",c:["0.5","1/2","1/4","0.25"],a:"0.5"},
-{q:"ما يمشي على أربع ثم اثنتين ثم ثلاث؟",c:["الإنسان","الكلب","الحصان","القط"],a:"الإنسان"},
-{q:"ما الذي إذا مشى نقص؟",c:["العمر","المسافة","الظل","الوقت"],a:"المسافة"},
-{q:"شي لا وزن له؟",c:["الهواء","الماء","الحديد","الخشب"],a:"الهواء"},
-{q:"ما الذي يموت إذا شرب؟",c:["النار","الظل","النبات","الحديد"],a:"النار"},
-{q:"ما الذي لا يدخل إلا إذا خرج؟",c:["النفس","الصوت","الضوء","الظل"],a:"النفس"},
-{q:"شي تراه ولا تلمسه؟",c:["الهواء","الضوء","الماء","التراب"],a:"الضوء"},
-
-{q:"ما الذي يقطع ولا يُرى؟",c:["الهواء","السكين","الصوت","الظل"],a:"الصوت"},
-{q:"ما الذي لا يكذب أبدًا؟",c:["الوقت","الساعة","الميزان","الظل"],a:"الوقت"},
-{q:"شي إذا غليته جمد؟",c:["البيض","الماء","الحليب","الزيت"],a:"البيض"},
-{q:"ما الذي يسقط دائمًا ولا ينكسر؟",c:["الظل","الوقت","الليل","المطر"],a:"الليل"},
-{q:"ما الذي يذهب ولا يعود؟",c:["الماضي","الهواء","الصوت","الضوء"],a:"الماضي"},
-{q:"ما الذي إذا سميته اختفى؟",c:["الصمت","الظل","النور","الصوت"],a:"الصمت"},
-{q:"ما الذي له أسنان ولا يعض؟",c:["المشط","المنشار","المفتاح","السحاب"],a:"المشط"},
-{q:"ما الذي يمشي بلا رأس؟",c:["النهر","الطريق","الظل","الريح"],a:"النهر"},
-{q:"ما الذي لا يمشي إلا إذا وقف؟",c:["الساعة","السيارة","المروحة","القلم"],a:"الساعة"},
-{q:"ما الذي له عين ولا يرى؟",c:["الإبرة","العاصفة","الإعصار","السماء"],a:"الإبرة"}
+/* ===== بنك الألوان ===== */
+const colors = [
+    {name:"أحمر", color:"red"},
+    {name:"أزرق", color:"blue"},
+    {name:"أخضر", color:"green"},
+    {name:"أصفر", color:"gold"},
+    {name:"بنفسجي", color:"purple"},
+    {name:"برتقالي", color:"orange"}
 ];
 
-function shuffle(a){return a.sort(()=>Math.random()-0.5);}
-const questions = shuffle([...allQuestions]).slice(0,10);
+/* ===== توليد 50 سؤال ===== */
+const allQuestions = Array.from({length:50}, ()=>{
+    const word = colors[Math.floor(Math.random()*colors.length)];
+    const ink  = colors[Math.floor(Math.random()*colors.length)];
+    return {
+        text: word.name,
+        color: ink.color,
+        choices: shuffle(colors.map(c=>c.name)),
+        answer: ink.name
+    };
+});
 
-let i=0, score=0, answers=[];
-let time=5, timer;
+/* ===== اختيار 10 عشوائي ===== */
+let questions = shuffle([...allQuestions]).slice(0,10);
+let index = 0;
+let score = 0;
+let log = [];
+let timer;
 
-const questionEl=document.getElementById("question");
-const optionsEl=document.getElementById("options");
-const timerEl=document.getElementById("timer");
-const gameEl=document.getElementById("game");
-const resultsEl=document.getElementById("results");
-const centerMsg=document.getElementById("centerMsg");
+/* ===== عرض السؤال ===== */
+function showQuestion(){
+    clearTimeout(timer);
 
-function startTimer(){
-    time=5;
-    timerEl.innerText="⏱️ "+time;
-    timer=setInterval(()=>{
-        time--;
-        timerEl.innerText="⏱️ "+time;
-        if(time===0){
-            clearInterval(timer);
-            next(null);
-        }
-    },1000);
-}
+    const q = questions[index];
+    const questionBox = document.getElementById("question");
+    const answersBox  = document.getElementById("answers");
 
-function show(){
-    const q=questions[i];
-    questionEl.innerText=q.q;
-    optionsEl.innerHTML="";
-    startTimer();
-    shuffle([...q.c]).forEach(o=>{
-        const b=document.createElement("button");
-        b.className="option";
-        b.innerText=o;
-        b.onclick=()=>next(o);
-        optionsEl.appendChild(b);
+    questionBox.innerHTML = `
+        اختر لون الخط:
+        <br>
+        <span style="color:${q.color}; font-size:36px;">
+            ${q.text}
+        </span>
+    `;
+
+    answersBox.innerHTML = "";
+    shuffle([...q.choices]).forEach(choice=>{
+        const btn = document.createElement("button");
+        btn.innerText = choice;
+
+        btn.style.background =
+            choice==="أحمر"?"red":
+            choice==="أزرق"?"blue":
+            choice==="أخضر"?"green":
+            choice==="أصفر"?"gold":
+            choice==="بنفسجي"?"purple":
+            "orange";
+
+        btn.onclick = ()=>selectAnswer(choice);
+        answersBox.appendChild(btn);
     });
+
+    timer = setTimeout(()=>selectAnswer(null),5000);
 }
 
-function next(sel){
-    clearInterval(timer);
-    const q=questions[i];
-    if(sel===q.a) score++;
-    answers.push({q:q.q,sel,cor:q.a});
-    i++;
-    i<questions.length?show():end();
+/* ===== اختيار ===== */
+function selectAnswer(selected){
+    clearTimeout(timer);
+
+    const q = questions[index];
+    log.push({
+        question: `${q.text} (${q.color})`,
+        selected,
+        correct: q.answer
+    });
+
+    if(selected === q.answer) score++;
+    index++;
+
+    if(index < questions.length){
+        showQuestion();
+    }else{
+        endGame();
+    }
 }
 
-function end(){
-    gameEl.style.display="none";
-    let msg="";
-    if(score>=7) msg="حي عينك كفو كفو !";
-    else if(score>=4) msg="مااااش!";
-    else msg="لحد يشوف درجتك بس";
+/* ===== نهاية اللعبة ===== */
+function endGame(){
+    localStorage.setItem("challengeScore", score+"/10");
 
-    centerMsg.innerText=msg+" ("+score+"/10)";
-    centerMsg.style.display="flex";
+    let msg =
+        score >= 7 ? "حي عينك كفو كفو!" :
+        score >= 4 ? "مااااش!" :
+        "لا حد يشوف درجتك بس";
+
+    const overlay = document.createElement("div");
+    overlay.className = "center";
+    overlay.innerHTML = `<div>${msg}<br>درجتك: ${score}/10</div>`;
+    document.body.appendChild(overlay);
 
     setTimeout(()=>{
-        centerMsg.style.display="none";
-        answers.forEach(a=>{
-            const d=document.createElement("div");
-            d.className="result";
-            d.innerHTML=`
-            <strong>${a.q}</strong><br>
-            <span class="${a.sel===a.cor?'correct':'incorrect'}">
-            اختيارك: ${a.sel ?? "ما جاوبت"}
-            </span><br>
-            <span class="correct">الصحيح: ${a.cor}</span>`;
-            resultsEl.appendChild(d);
+        overlay.remove();
+
+        const answersBox = document.getElementById("answers");
+        const questionBox = document.getElementById("question");
+
+        questionBox.innerText = "تفصيل الإجابات:";
+        answersBox.innerHTML = "";
+
+        log.forEach(r=>{
+            const d = document.createElement("div");
+            d.className = "result";
+            d.innerHTML = `
+                ${r.question}<br>
+                <span class="${r.selected===r.correct ? "correct":"incorrect"}">
+                    اختيارك: ${r.selected ?? "⏱️"}
+                </span><br>
+                <span class="correct">الصحيح: ${r.correct}</span>
+            `;
+            answersBox.appendChild(d);
         });
     },3000);
 }
 
-show();
+/* ===== بدء ===== */
+showQuestion();
