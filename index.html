@@ -7,14 +7,17 @@
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="home">
 
+<!-- زر الدارك مود -->
 <button id="darkToggle" onclick="toggleDark()">🌙</button>
 
 <div class="container">
 
+    <!-- زر القائمة -->
     <div class="menu-btn" onclick="toggleMenu()">☰</div>
 
+    <!-- القائمة -->
     <div class="menu" id="menu">
         <h3>📊 درجاتك</h3>
         <div>آخر نتيجة: <span id="lastScore">-</span></div>
@@ -23,18 +26,27 @@
         <div>🧮 رياضيات: <span id="mathScore">-</span></div>
         <div>🧠 معلومات: <span id="logicScore">-</span></div>
         <div>🃏 ذاكرة: <span id="memoryScore">-</span></div>
+        <div>🎯 تحدي: <span id="challengeScore">-</span></div>
     </div>
 
+    <!-- العنوان -->
     <h1>هلا والله يالله حيه</h1>
     <p>اختر من الالعاب ذي طال عمرك</p>
 
+    <!-- أزرار الألعاب -->
     <button class="game-button" onclick="goTo('math-game.html')">🧮 لعبة الرياضيات</button>
     <button class="game-button" onclick="goTo('logic-game.html')">🧠 لعبة المعلومات</button>
     <button class="game-button" onclick="goTo('memory-game.html')">🃏 لعبة الذاكرة</button>
+    <button class="game-button" onclick="goTo('challenge-game.html')">🎯 لعبة التحدي</button>
 
+    <!-- تصفير -->
     <button class="reset-btn" onclick="resetAll()">🔄 تصفير الدرجات</button>
 
-    <footer>تم تطوير وبرمجة هذا الموقع بواسطة فارس</footer>
+    <!-- الفوتر -->
+    <footer class="footer">
+        تم تطوير وبرمجة هذا الموقع بواسطة <span>فارس</span> 💻
+    </footer>
+
 </div>
 
 <script src="script.js"></script>
