@@ -1,4 +1,3 @@
-/* ===== إعدادات عامة ===== */
 *{
     box-sizing:border-box;
     font-family: Arial, sans-serif;
@@ -7,132 +6,73 @@
 body{
     margin:0;
     min-height:100vh;
-    background: linear-gradient(135deg,#1b2b2e,#0f1c1f);
+    background: linear-gradient(135deg,#3a5f63,#2f3e46);
     display:flex;
     justify-content:center;
     align-items:center;
     color:#fff;
 }
 
-/* ===== الحاوية ===== */
-.game-container{
+.card{
     background:#1f2f33;
     width:90%;
-    max-width:560px;
-    padding:40px 35px;
-    border-radius:24px;
-    box-shadow:0 30px 70px rgba(0,0,0,.7);
+    max-width:420px;
+    padding:35px 25px;
+    border-radius:22px;
     text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
 }
 
-/* ===== زر الرجوع ===== */
-.back{
-    position:absolute;
-    top:20px;
-    left:20px;
-    background:#eee;
-    color:#111;
-    border:none;
-    border-radius:12px;
-    padding:8px 14px;
-    cursor:pointer;
+h1{
+    margin-bottom:10px;
+    font-size:28px;
 }
 
-/* ===== السؤال (بطاقة بيضاء) ===== */
-.question{
-    background:#fff;
-    color:#111;
-    padding:20px;
-    border-radius:16px;
-    font-size:30px;
-    font-weight:bold;
-    margin-bottom:30px;
+.sub{
+    opacity:.85;
+    margin-bottom:25px;
 }
 
-/* ===== الخيارات (قوائم سوداء) ===== */
-.answers{
-    display:flex;
-    flex-direction:column;
+.games{
+    display:grid;
+    grid-template-columns:1fr 1fr;
     gap:15px;
+    margin-bottom:20px;
 }
 
-.answers button{
-    background:#000;
-    color:#fff;
+.games button{
+    background:#dfe5db;
     border:none;
-    padding:18px;
-    font-size:22px;
-    border-radius:14px;
+    border-radius:16px;
+    padding:18px 10px;
+    font-size:18px;
     cursor:pointer;
-    transition:.2s;
+    color:#2f3e46;
+    transition:.25s;
 }
 
-.answers button:hover{
-    background:#222;
-    transform:scale(1.03);
+.games button:hover{
+    transform:scale(1.05);
+    background:#f1f4ee;
 }
 
-/* ===== رسالة المنتصف ===== */
-.center{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.8);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
-}
-
-.center div{
-    background:#fff;
-    color:#111;
-    padding:30px 40px;
-    border-radius:20px;
-    font-size:26px;
-    font-weight:bold;
-}
-
-/* ===== النتائج ===== */
-.results{
-    margin-top:25px;
-    text-align:right;
-}
-
-.result{
-    background:#fff;
-    color:#111;
-    padding:14px;
-    border-radius:14px;
-    margin-bottom:12px;
-    font-size:15px;
-}
-
-.correct{
-    color:green;
-    font-weight:bold;
-}
-
-.incorrect{
-    color:red;
-    font-weight:bold;
-}
-
-/* ===== زر إعادة اللعب ===== */
-.actions{
-    margin-top:25px;
-}
-
-.actions button{
+.reset{
     width:100%;
     padding:16px;
     border:none;
     border-radius:16px;
     background:#e63946;
     color:#fff;
-    font-size:20px;
+    font-size:18px;
     cursor:pointer;
+    margin-bottom:15px;
 }
 
-.actions button:hover{
+.reset:hover{
     background:#ff4d5a;
+}
+
+.footer{
+    font-size:14px;
+    opacity:.85;
 }
