@@ -2,67 +2,229 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>لعبة التحدي</title>
-
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحدي الألوان</title>
 
 <style>
+*{box-sizing:border-box;font-family:Arial}
+
 body{
-    font-family:Arial;
-    background:#f0f0f0;
     margin:0;
-    padding-top:20px;
-    text-align:center;
-}
-.question{font-size:22px;margin:20px}
-.option{
-    display:block;
-    width:300px;
-    margin:8px auto;
-    padding:10px;
-    font-size:18px;
-    cursor:pointer;
-    border-radius:10px;
-    border:1px solid #ccc;
-}
-.option:hover{background:#eee}
-.correct{color:green}
-.incorrect{color:red}
-.result{
-    background:#fff;
-    margin:10px auto;
-    padding:10px;
-    border-radius:12px;
-    width:90%;
-    max-width:520px;
-    text-align:right;
-}
-#timer{font-size:18px;margin:10px}
-#centerMsg{
-    position:fixed;
-    inset:0;
-    display:none;
+    min-height:100vh;
+    background:linear-gradient(135deg,#222,#000);
+    display:flex;
     justify-content:center;
     align-items:center;
-    font-size:32px;
-    background:rgba(0,0,0,.6);
     color:#fff;
 }
+
+.game-container{
+    position:relative;
+    width:90%;
+    max-width:520px;
+    background:rgba(0,0,0,.6);
+    padding:30px;
+    border-radius:22px;
+    text-align:center;
+}
+
+.back{
+    position:absolute;
+    top:15px;
+    left:15px;
+    border:none;
+    border-radius:12px;
+    padding:8px 14px;
+    cursor:pointer;
+}
+
+.menu-btn{
+    position:absolute;
+    top:15px;
+    right:15px;
+    cursor:pointer;
+    font-size:22px;
+}
+
+.menu{
+    position:absolute;
+    top:55px;
+    right:10px;
+    background:#fff;
+    color:#000;
+    width:100%;
+    max-width:480px;
+    padding:15px;
+    border-radius:16px;
+    display:none;
+    text-align:right;
+}
+
+.question{
+    background:#fff;
+    color:#000;
+    padding:25px;
+    border-radius:16px;
+    font-size:30px;
+    margin-bottom:25px;
+}
+
+.answers{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.answers button{
+    border:none;
+    border-radius:16px;
+    padding:20px;
+    font-size:20px;
+    cursor:pointer;
+    color:#fff;
+}
+
+.center{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.85);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:100;
+}
+.center div{
+    background:#fff;
+    color:#000;
+    padding:30px;
+    border-radius:20px;
+    font-size:24px;
+    text-align:center;
+}
+
+.result{
+    background:#f1f1f1;
+    color:#000;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:10px;
+    font-size:14px;
+}
+
+.correct{color:green;font-weight:bold}
+.incorrect{color:red;font-weight:bold}
 </style>
 </head>
 
 <body>
 
-<div id="timer"></div>
+<div class="game-container">
 
-<div id="game">
-    <div class="question" id="question"></div>
-    <div id="options"></div>
+<button class="back" onclick="location.href='index.html'">⬅️</button>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<div class="menu" id="menu">
+<h3>📊 آخر نتيجة</h3>
+<div id="scoreBox">-</div>
 </div>
 
-<div id="results"></div>
-<div id="centerMsg"></div>
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
 
-<script src="challenge.js"></script>
+</div>
+
+<script>
+const colors=[
+{name:"أحمر",color:"red"},
+{name:"أزرق",color:"blue"},
+{name:"أخضر",color:"green"},
+{name:"أصفر",color:"gold"},
+{name:"بنفسجي",color:"purple"},
+{name:"برتقالي",color:"orange"}
+];
+
+const allQuestions = Array.from({length:50},()=>{
+    const word = colors[Math.floor(Math.random()*colors.length)];
+    const ink  = colors[Math.floor(Math.random()*colors.length)];
+    return {
+        q:`اختر لون الخط`,
+        text:word.name,
+        color:ink.color,
+        c: shuffle(colors.map(c=>c.name)),
+        a: ink.name
+    };
+});
+
+function shuffle(a){return a.sort(()=>Math.random()-0.5)}
+
+let questions = shuffle([...allQuestions]).slice(0,10);
+let index=0, score=0, log=[];
+let timer;
+
+function show(){
+    clearTimeout(timer);
+    const q=questions[index];
+    question.innerHTML=`${q.q}<br><span style="color:${q.color}">${q.text}</span>`;
+    answers.innerHTML="";
+    shuffle([...q.c]).forEach(o=>{
+        const b=document.createElement("button");
+        b.innerText=o;
+        b.style.background=o==="أحمر"?"red":
+                           o==="أزرق"?"blue":
+                           o==="أخضر"?"green":
+                           o==="أصفر"?"gold":
+                           o==="بنفسجي"?"purple":"orange";
+        b.onclick=()=>choose(o);
+        answers.appendChild(b);
+    });
+    timer=setTimeout(()=>choose(null),5000);
+}
+
+function choose(sel){
+    clearTimeout(timer);
+    const q=questions[index];
+    log.push({q:`${q.text} (${q.color})`,sel,cor:q.a});
+    if(sel===q.a) score++;
+    index++;
+    index<questions.length?show():end();
+}
+
+function end(){
+    localStorage.setItem("challengeScore",score+"/10");
+    scoreBox.innerText=score+"/10";
+
+    let msg = score>=7?"حي عينك كفو كفو!"
+            :score>=4?"مااااش!"
+            :"لا حد يشوف درجتك بس";
+
+    const c=document.createElement("div");
+    c.className="center";
+    c.innerHTML=`<div>${msg}<br>درجتك: ${score}/10</div>`;
+    document.body.appendChild(c);
+
+    setTimeout(()=>{
+        c.remove();
+        answers.innerHTML="";
+        question.innerText="تفصيل الإجابات:";
+        log.forEach(r=>{
+            const d=document.createElement("div");
+            d.className="result";
+            d.innerHTML=`${r.q}<br>
+            <span class="${r.sel===r.cor?'correct':'incorrect'}">
+            اختيارك: ${r.sel ?? "⏱️"}
+            </span><br>
+            <span class="correct">الصحيح: ${r.cor}</span>`;
+            answers.appendChild(d);
+        });
+    },3000);
+}
+
+function toggleMenu(){
+    menu.style.display = menu.style.display==="block"?"none":"block";
+}
+
+show();
+</script>
+
 </body>
 </html>
